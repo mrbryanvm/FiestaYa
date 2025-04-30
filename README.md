@@ -10,7 +10,7 @@ Git
 Instalación Inicial
 
 1. Clonar el Repositorio
-git clone https://github.com/usuario/event-services-app.git
+git clone https://g........
 
 cd FiestaYa
 
