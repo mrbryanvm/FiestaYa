@@ -1,0 +1,14 @@
+name: event_services_app
+description: App para gestionar eventos y servicios
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.13.5 # Para hacer peticiones HTTP al backend
+
+flutter:
+  uses-material-design: true
