@@ -1,5 +1,5 @@
-name: event_services_app
-description: App para gestionar eventos y servicios
+name: konekta_app
+description: App para organizar eventos - Konekta
 version: 1.0.0+1
 
 environment:

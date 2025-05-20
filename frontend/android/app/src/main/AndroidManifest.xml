@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.event_services_app">
+     package="com.konekta.app"
 
     <application
         android:label="FiestaYa"
