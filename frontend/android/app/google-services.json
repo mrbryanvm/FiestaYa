@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "669896985704",
+    "project_id": "fiestaya-967df",
+    "storage_bucket": "fiestaya-967df.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669896985704:android:90b936243d837e7718bfdd",
+        "android_client_info": {
+          "package_name": "com.example.event_services_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADzrNEgr7ykmZGkN4oIGrRaNl4MGkGs4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,7 +8,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.5 # Para hacer peticiones HTTP al backend
+  http: ^0.13.6
+  font_awesome_flutter: ^10.7.0
+  firebase_auth: ^4.20.0
+  firebase_core: ^2.32.0
+  google_sign_in: ^6.1.4
+  intl: ^0.19.0
+  flutter_localizations:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/logo.png
+    - assets/google_logo.png
