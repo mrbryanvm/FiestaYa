@@ -18,3 +18,4 @@ build/
 
 # Ignorar archivos ZIP
 *.zip
+backend/config/backend-firebase-adminsdk.json
