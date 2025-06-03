@@ -1,0 +1,37 @@
+const admin = require('../config/firebase');
+
+// Función para login: recibe token de Firebase, valida y devuelve usuario
+exports.login = async (req, res) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    return res.status(400).json({ message: 'idToken es requerido' });
+  }
+
+  try {
+    // Verifica el token con Firebase
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+
+    // Aquí puedes buscar o crear usuario en tu base de datos PostgreSQL
+    // Para simplificar, devolvemos el uid y email de Firebase
+
+    const userRecord = await admin.auth().getUser(uid);
+
+    return res.json({
+      uid: userRecord.uid,
+      email: userRecord.email,
+      name: userRecord.displayName,
+      picture: userRecord.photoURL
+    });
+  } catch (error) {
+    console.error('Error verificando token Firebase:', error);
+    return res.status(401).json({ message: 'Token inválido' });
+  }
+};
+
+// Función logout (opcional)
+exports.logout = (req, res) => {
+  // Para Firebase el logout es del lado cliente, pero si usas sesiones, destrúyelas aquí.
+  res.json({ message: 'Logout exitoso' });
+};
