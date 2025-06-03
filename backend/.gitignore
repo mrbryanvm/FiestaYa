@@ -1,0 +1,20 @@
+# Ignorar node_modules
+node_modules/
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar logs de npm
+npm-debug.log
+
+# Ignorar carpetas y archivos de Flutter (si tienes frontend Flutter)
+build/
+.android/
+.ios/
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
+.packages
+
+# Ignorar archivos ZIP
+*.zip
