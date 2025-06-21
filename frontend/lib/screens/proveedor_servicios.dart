@@ -1,32 +1,29 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
-import 'package:konekta_app/modelos/producto.dart';
 import '../componentes/card_producto.dart';
 import '../componentes/mostrar_aviso.dart';
 import '../componentes/producto_formulario.dart';
 import '../decoracion/colores_app.dart';
+import '../modelos/producto.dart';
 import '../services/api_service.dart';
-import 'proveedor_home.dart';
 
-class RegistroCatalogo extends StatefulWidget {
-  final int idUsuario;
+class ProveedorServicios extends StatefulWidget {
   final int idProveedor;
+  final int idUsuario;
   final String empresa;
-  const RegistroCatalogo({
+  const ProveedorServicios({
     super.key,
-    required this.idUsuario,
     required this.idProveedor,
+    required this.idUsuario,
     required this.empresa,
   });
 
   @override
-  State<RegistroCatalogo> createState() => _RegistroCatalogoState();
+  State<ProveedorServicios> createState() => _ProveedorServiciosState();
 }
 
-class _RegistroCatalogoState extends State<RegistroCatalogo> {
-  bool _cargando = true;
+class _ProveedorServiciosState extends State<ProveedorServicios> {
   final List<Producto> productos = [];
+  bool _cargando = true;
   int? idCatalogo;
 
   @override
@@ -96,27 +93,11 @@ class _RegistroCatalogoState extends State<RegistroCatalogo> {
     }
   }
 
-  void _finalizarRegistro() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => ProveedorHome(
-              idusuario: widget.idUsuario,
-              idProveedor: widget.idProveedor,
-              tipoUsuario: 'proveedor',
-              empresa: widget.empresa,
-            ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final bool puedeFinalizar = productos.isNotEmpty;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catálogo de Productos'),
+        title: const Text('Mis Servicios'),
         backgroundColor: ColoresApp.celeste,
       ),
       body: Stack(
@@ -146,7 +127,7 @@ class _RegistroCatalogoState extends State<RegistroCatalogo> {
                     else if (productos.isEmpty)
                       const Center(
                         child: Text(
-                          'Ingresar al menos un producto para terminar registro',
+                          'No tienes productos registrados',
                           style: TextStyle(fontSize: 18),
                         ),
                       )
@@ -156,28 +137,35 @@ class _RegistroCatalogoState extends State<RegistroCatalogo> {
                           itemCount: productos.length,
                           itemBuilder: (context, index) {
                             final producto = productos[index];
-                            return ProductoCard(producto: producto);
+                            return ProductoCard(
+                              producto: producto,
+                              opcionesMenu: {
+                                'eliminar': 'Eliminar',
+                                'cambiar_estado':
+                                    producto.disponible
+                                        ? 'Agotado'
+                                        : 'Disponible',
+                              },
+                              onOpcionSeleccionada: (value) async {
+                                if (value == 'eliminar') {
+                                  await ApiService.eliminarProducto(
+                                    producto.id,
+                                  );
+                                  _cargarProductosDesdeBD();
+                                } else if (value == 'cambiar_estado') {
+                                  final nuevoEstado = !producto.disponible;
+                                  await ApiService.actualizarDisponibilidad(
+                                    producto.id,
+                                    nuevoEstado,
+                                  );
+                                  _cargarProductosDesdeBD();
+                                }
+                              },
+                            );
                           },
                         ),
                       ),
                     const SizedBox(height: 20),
-                    Center(
-                      child: ElevatedButton.icon(
-                        onPressed: puedeFinalizar ? _finalizarRegistro : null,
-                        icon: const Icon(Icons.check_circle),
-                        label: const Text('Finalizar registro'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              puedeFinalizar ? ColoresApp.celeste : Colors.grey,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
                   ],
                 ),
               ),

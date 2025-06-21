@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:konekta_app/modelos/departamento.dart';
 
 import '../componentes/google_button.dart';
+import '../componentes/mostrar_aviso.dart';
 import '../componentes/textfield.dart';
 import '../decoracion/colores_app.dart';
 import '../decoracion/tema.dart';
+import '../services/api_service.dart';
+import 'organizador_home.dart';
 
 class RegistroOrg extends StatefulWidget {
   const RegistroOrg({super.key});
@@ -16,23 +21,38 @@ class _RegistroOrgState extends State<RegistroOrg> {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController usuarioController = TextEditingController();
   final TextEditingController numrefController = TextEditingController();
-  final TextEditingController ubicacionController = TextEditingController();
+  final TextEditingController fechaNacimientoController =
+      TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   bool passwordVisible = false;
+  DateTime? fechaNacimiento;
+  Departamento? departamentoSeleccionado;
+  bool cargando = false;
+  List<Departamento> departamentos = [];
 
-  String? departamentoSeleccionado;
-  final List<String> departamentos = [
-    'La Paz',
-    'Cochabamba',
-    'Santa Cruz',
-    'Oruro',
-    'Potosí',
-    'Chuquisaca',
-    'Tarija',
-    'Beni',
-    'Pando',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    cargarDepartamentos();
+  }
+
+  Future<void> cargarDepartamentos() async {
+    try {
+      final datos = await ApiService.obtenerDepartamentos();
+      print(
+        '📦 Departamentos cargados: ${datos.map((e) => e.nombre).toList()}',
+      );
+      setState(() {
+        departamentos = datos;
+        departamentoSeleccionado = datos.first;
+      });
+    } catch (e) {
+      print('🚨 Error cargando departamentos: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,45 +103,46 @@ class _RegistroOrgState extends State<RegistroOrg> {
                     ),
                     const SizedBox(height: 15),
                     SizedBox(
-                      width: 350,
-                      child: DropdownButtonFormField<String>(
-                        value: departamentoSeleccionado,
-                        items:
-                            departamentos
-                                .map(
-                                  (dep) => DropdownMenuItem(
-                                    value: dep,
-                                    child: SizedBox(
-                                      width: 250,
-                                      child: Text(dep),
+                      width: 300,
+                      child:
+                          departamentos.isEmpty
+                              ? Center(child: CircularProgressIndicator())
+                              : DropdownButtonFormField<Departamento>(
+                                value: departamentoSeleccionado,
+                                items:
+                                    departamentos.map((dep) {
+                                      return DropdownMenuItem<Departamento>(
+                                        value: dep,
+                                        child: SizedBox(
+                                          width: 250,
+                                          child: Text(dep.nombre),
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (nuevo) {
+                                  setState(() {
+                                    departamentoSeleccionado = nuevo;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  labelText: 'Departamento de residencia',
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColoresApp.celeste,
+                                      width: 2,
                                     ),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            departamentoSeleccionado = value;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Departamento de residencia',
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: ColoresApp.celeste,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: ColoresApp.celeste,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        dropdownColor: ColoresApp.naranja,
-                      ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColoresApp.celeste,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                dropdownColor: ColoresApp.naranja,
+                              ),
                     ),
                     const SizedBox(height: 15),
                     Textfield(
@@ -130,10 +151,28 @@ class _RegistroOrgState extends State<RegistroOrg> {
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 16),
-                    Textfield(
-                      labeltext: 'Ubicación del negocio',
-                      controller: ubicacionController,
-                      keyboardType: TextInputType.text,
+                    GestureDetector(
+                      onTap: () async {
+                        DateTime? fechaSeleccionada = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime(2000),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (fechaSeleccionada != null) {
+                          fechaNacimiento = fechaSeleccionada;
+
+                          fechaNacimientoController.text =
+                              '${fechaSeleccionada.day.toString().padLeft(2, '0')}/${fechaSeleccionada.month.toString().padLeft(2, '0')}/${fechaSeleccionada.year}';
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: Textfield(
+                          labeltext: 'Fecha de nacimiento',
+                          controller: fechaNacimientoController,
+                          keyboardType: TextInputType.datetime,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 15),
                     Textfield(
@@ -143,7 +182,7 @@ class _RegistroOrgState extends State<RegistroOrg> {
                     ),
                     const SizedBox(height: 15),
                     SizedBox(
-                      width: 350,
+                      width: 300,
                       child: TextField(
                         controller: passwordController,
                         obscureText: !passwordVisible,
@@ -179,9 +218,9 @@ class _RegistroOrgState extends State<RegistroOrg> {
                     ),
                     const SizedBox(height: 15),
                     SizedBox(
-                      width: 350,
+                      width: 300,
                       child: TextField(
-                        controller: passwordController,
+                        controller: confirmPasswordController,
                         obscureText: !passwordVisible,
                         keyboardType: TextInputType.visiblePassword,
                         decoration: InputDecoration(
@@ -217,7 +256,116 @@ class _RegistroOrgState extends State<RegistroOrg> {
                     SizedBox(
                       width: 300,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed:
+                            cargando
+                                ? null
+                                : () async {
+                                  setState(() => cargando = true);
+
+                                  if (passwordController.text !=
+                                      confirmPasswordController.text) {
+                                    mostrarAviso(
+                                      context: context,
+                                      titulo: 'Error',
+                                      contenido:
+                                          'Las contraseñas no coinciden.',
+                                      onAceptar: () {},
+                                    );
+                                    setState(() => cargando = false);
+                                    return;
+                                  }
+
+                                  final nombreCompleto =
+                                      nombreController.text.trim();
+                                  final telefono = numrefController.text.trim();
+                                  final fechaFormateada = DateFormat(
+                                    'yyyy-MM-dd',
+                                  ).format(fechaNacimiento!);
+                                  final email = emailController.text.trim();
+                                  final password =
+                                      passwordController.text.trim();
+                                  final departamentoId =
+                                      departamentoSeleccionado?.id;
+
+                                  if (nombreCompleto.isEmpty ||
+                                      telefono.isEmpty ||
+                                      fechaFormateada.isEmpty ||
+                                      email.isEmpty ||
+                                      password.isEmpty ||
+                                      departamentoId == null) {
+                                    mostrarAviso(
+                                      context: context,
+                                      titulo: 'Error',
+                                      contenido:
+                                          'Por favor, complete todos los campos.',
+                                      onAceptar: () {},
+                                    );
+                                    setState(() => cargando = false);
+                                    return;
+                                  }
+
+                                  try {
+                                    final resultado =
+                                        await ApiService.registrarOrganizador({
+                                          'nomusuario': nombreCompleto,
+                                          'contrasena': password,
+                                          'correoelectronico': email,
+                                          'departamento_iddepartamento':
+                                              departamentoId,
+                                          'nombrecompleto': nombreCompleto,
+                                          'telefonoorg': telefono,
+                                          'fechanacimiento': fechaFormateada,
+                                        });
+
+                                    final int idUsuario =
+                                        resultado['idusuario'];
+                                    final int idOrganizador =
+                                        resultado['idorganizador'];
+                                    final String nombre =
+                                        resultado['nombrecompleto'];
+
+                                    if (!context.mounted) return;
+
+                                    mostrarAviso(
+                                      context: context,
+                                      titulo: 'Registro exitoso',
+                                      contenido:
+                                          'El organizador fue registrado correctamente.',
+                                      onAceptar: () {
+                                        setState(() => cargando = false);
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => OrganizadorHome(
+                                                  idusuario: idUsuario,
+                                                  idOrganizador: idOrganizador,
+                                                  tipoUsuario: 'organizador',
+                                                  nombre: nombre,
+                                                ),
+                                          ),
+                                        );
+                                      },
+                                    );
+
+                                    // Limpiar campos
+                                    nombreController.clear();
+                                    numrefController.clear();
+                                    fechaNacimientoController.clear();
+                                    emailController.clear();
+                                    passwordController.clear();
+                                    confirmPasswordController.clear();
+                                  } catch (e) {
+                                    mostrarAviso(
+                                      context: context,
+                                      titulo: 'Error',
+                                      contenido:
+                                          'No se pudo completar el registro: $e',
+                                      onAceptar: () {},
+                                    );
+                                    setState(() => cargando = false);
+                                  }
+                                },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColoresApp.naranja,
                           foregroundColor: Colors.white,

@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "669896985704",
-    "project_id": "fiestaya-967df",
-    "storage_bucket": "fiestaya-967df.firebasestorage.app"
+    "project_number": "664956349772",
+    "project_id": "konekta-fde35",
+    "storage_bucket": "konekta-fde35.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:669896985704:android:90b936243d837e7718bfdd",
+        "mobilesdk_app_id": "1:664956349772:android:ecc362b524adebd62633e9",
         "android_client_info": {
-          "package_name": "com.example.event_services_app"
+          "package_name": "com.konekta.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyADzrNEgr7ykmZGkN4oIGrRaNl4MGkGs4s"
+          "current_key": "AIzaSyCvbZYbe4cXjiS3dLJPZCE3CxQB7ZY4dx8"
         }
       ],
       "services": {

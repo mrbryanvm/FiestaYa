@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'decoracion/colores_app.dart';
 import 'decoracion/main_color.dart';
 import 'decoracion/tema.dart';

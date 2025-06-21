@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../decoracion/colores_app.dart';
 
 class Textfield extends StatelessWidget {
@@ -19,7 +18,7 @@ class Textfield extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 350,
+      width: 300,
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,

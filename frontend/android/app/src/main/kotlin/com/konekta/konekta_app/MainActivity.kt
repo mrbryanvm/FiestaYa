@@ -1,4 +1,4 @@
-package com.example.event_services_app
+package com.konekta.konekta_app
 
 import io.flutter.embedding.android.FlutterActivity
 
